@@ -1,5 +1,5 @@
-var path = require('path')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   // 入口文件配置
@@ -47,10 +47,6 @@ module.exports = {
         exclude: /(node_modules)/, // node_modules下面的.js文件会被排除
         use: {
           loader: 'babel-loader',
-          // options里面的东西可以放到.babelrc文件中去,options表示使用的es6的版本
-          // options: {
-          //   presets: ['env']
-          // }
         }
       },
       {
