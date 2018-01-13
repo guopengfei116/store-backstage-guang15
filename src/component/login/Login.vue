@@ -52,12 +52,12 @@
                 rules: {
                     uname: [ 
                         { required: true, message: '请填写账号', trigger: 'blur' },
-                        { min: 6, max: 18, message: '账号在6~18位', trigger: 'blur' },
+                        { min: 5, max: 18, message: '账号在5~18位', trigger: 'blur' },
                         { validator: unameFn, trigger: 'blur' } 
                     ],
                     upwd: [ 
                         { validator: upwdFn, trigger: 'blur' },
-                        { pattern: /^\w{6, 18}$/, message: '密码在6~18位', trigger: 'blur' },
+                        { pattern: /^\w{6,18}$/, message: '密码在6~18位', trigger: 'blur' },
                     ]
                 }
             }
@@ -69,7 +69,8 @@
             login() {
                 this.$http.post(this.$api.login, this.formLabelAlign).then(res => {
                     if(res.data.status == 0) {
-                        this.$alert('登陆成功, 马上跳转到首页');
+                        // 使用了路由插件后, 就会拥有该对象
+                        this.$router.push({ name: 'admin' });
                     }else {
                         this.$alert(res.data.message);
                     }
