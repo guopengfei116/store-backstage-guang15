@@ -1,5 +1,7 @@
 // 导入默认初始化样式
 import 'normalize.css';
+// 导入自己写的全局样式
+import './less/index.less';
 
 // 1.1 导入vue相关的第三方包
 import Vue from 'vue';
