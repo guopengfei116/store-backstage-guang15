@@ -1,3 +1,6 @@
+// 导入默认初始化样式
+import 'normalize.css';
+
 // 1.1 导入vue相关的第三方包
 import Vue from 'vue';
 import VueRouter from 'vue-router';
