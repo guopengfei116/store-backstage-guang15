@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <h1>后台管理</h1>
+        <h1 ref="wokaixin">后台管理</h1>
         <!-- model用来关联表单数据, rules用来指定校验规则 -->
         <el-form label-position="left" label-width="80px" ref="ruleForm2" 
             :model="formLabelAlign" :rules="rules">
@@ -13,7 +13,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitForm('ruleForm2')">立即创建</el-button>
-                <el-button >重置</el-button>
+                <el-button @click="resetForm('ruleForm2')">重置</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -51,10 +51,13 @@
                 // 表单校验规则
                 rules: {
                     uname: [ 
-                        {validator: unameFn, trigger: 'blur'} 
+                        { required: true, message: '请填写账号', trigger: 'blur' },
+                        { min: 6, max: 18, message: '账号在6~18位', trigger: 'blur' },
+                        { validator: unameFn, trigger: 'blur' } 
                     ],
                     upwd: [ 
-                        {validator: upwdFn, trigger: 'blur'} 
+                        { validator: upwdFn, trigger: 'blur' },
+                        { pattern: /^\w{6, 18}$/, message: '密码在6~18位', trigger: 'blur' },
                     ]
                 }
             }
@@ -75,13 +78,28 @@
 
             // 表单提交
             submitForm(formName) {
-                this.$refs[formName].validate(vali => {
-                    if(vali) {
+                // 通过ref引用得到form表单元素, 然后调用validate方法去校验全部字段, 
+                // 全部字段都通过校验, 那么回调收到的值为true, 否则为false
+
+                // $refs是vue提供的用于替代传统的dom方法获取方式
+                // this.$refs.wokaixin = document.querySelector('h1')
+                // this.$refs.ruleForm2 = document.querySelector('form')
+
+                this.$refs[formName].validate(result => {
+                    // 全部都通过校验才登陆
+                    if(result) {
                         this.login();
-                    }else {
+                    }
+                    // 有一个错误也不行
+                    else {
                         this.$alert('哥们! 不带这么玩的');
                     }
                 });
+            },
+
+            // 重置
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
             }
         },
     }
