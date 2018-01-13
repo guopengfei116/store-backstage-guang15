@@ -1,9 +1,12 @@
 // 1.1 导入vue相关的第三方包
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css'
 
 // 1.2 启动vue插件
 Vue.use(VueRouter);
+Vue.use(ElementUI);
 
 // 2.1 导入自己写的根组件
 import App from './component/App.vue';
