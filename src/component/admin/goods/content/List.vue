@@ -13,7 +13,8 @@
             <el-button size="mini" plain icon="el-icon-check">全选</el-button>
             <el-button size="mini" plain icon="el-icon-delete">删除</el-button>
             <el-input style="width: 200px; float: right;" size="mini"
-                placeholder="请输入内容" prefix-icon="el-icon-search"></el-input>
+                placeholder="请输入内容" prefix-icon="el-icon-search"
+                v-model="gsListQuery.searchvalue" @blur="getGoodsList"></el-input>
         </div>
 
         <!-- 表格 -->
@@ -28,8 +29,21 @@
             <!-- 没有type类型就是普通类型, 普通类型可以通过label设置表头 -->
             <!-- 普通类型还通过内嵌template标签, 书写当前列展示的数据 -->
             <el-table-column label="标题">
+                
                 <!-- scope.row是固定写法, title是活的, 展示什么字段, 就写什么 -->
-                <template slot-scope="scope">{{ scope.row.title }}</template>
+                <template slot-scope="scope">
+                    <el-tooltip class="item" effect="dark" placement="right">
+
+                        <!-- titip的提示信息, 这个标签必须加一个slot属性 -->
+                        <div slot="content">
+                            <img style="width: 200px" :src="scope.row.imgurl" alt="商品预览">
+                        </div>
+
+                        <!-- 被提示的原标签 -->
+                        <router-link :to="{ name: 'goodsCtEdit', params: { id: scope.row.id } }">{{ scope.row.title }}</router-link>
+                   
+                    </el-tooltip>
+                </template>
             </el-table-column>
 
             <!-- 所属类别 -->
@@ -60,7 +74,7 @@
             <!-- 显示的数据是死的, 固定为'修改', 用template包裹实现, 同时需要包裹router-link标签, 为了实现点击跳转 -->
             <el-table-column label="日期" width="120">
                 <template slot-scope="scope">
-                    <router-link :to="{ name: 'goodsCtEdit', params: { id: 10 } }">修改</router-link>
+                    <router-link :to="{ name: 'goodsCtEdit', params: { id: scope.row.id } }">修改</router-link>
                 </template>
             </el-table-column>
 
