@@ -60,13 +60,24 @@
             <!-- 销售价 -->
             <el-table-column prop="sell_price" label="销售价" width="120"></el-table-column>
 
-            <!-- 属性 -->
+            <!-- 状态 -->
             <!-- 显示的数据是三个icon图标, 只能用template包裹实现 -->
-            <el-table-column label="日期" width="120">
+            <el-table-column label="状态" width="120">
                 <template slot-scope="scope">
-                    <i class="el-icon-picture"></i>
-                    <i class="el-icon-upload"></i>
-                    <i class="el-icon-star-on"></i>
+
+                    <!-- 字体图标, 默认为浅灰色, 如果添加active类, 那么就是亮黑色 -->
+                    <!-- class可以写活, 值可以为一个数组, 里面可以加表达式运算 -->
+                    <!-- 监听点击事件, 需要把当前商品的id, 修改的字段, 以及该字段新的状态(布尔值)传过去 -->
+                    <i :class="['el-icon-picture', scope.row.is_slide == 1? 'active': '']"
+                        @click="modifyStatus(scope.row.id, 'is_slide', scope.row.is_slide == 1? false: true)">
+                    </i>
+                    <i :class="['el-icon-upload2', scope.row.is_top == 1? 'active': '']"
+                        @click="modifyStatus(scope.row.id, 'is_top', scope.row.is_top == 1? false: true)">
+                    </i>
+                    <i :class="['el-icon-star-on', scope.row.is_hot == 1? 'active': '']"
+                        @click="modifyStatus(scope.row.id, 'is_hot', scope.row.is_hot == 1? false: true)">
+                    </i>
+
                 </template>
             </el-table-column>
 
@@ -140,6 +151,21 @@
                     // res.data.pageIndex
                     // res.data.pageSize
                 });
+            },
+
+            // 修改商品状态
+            modifyStatus(id, type, newStatus) {
+
+                // post方法的第二个参数是要提交的数据, 第三个参数是一个配置对象
+                // 注意: 下面的数据使用的是es6语法, 含义: { [引用变量]: 引用变量 }
+                // this.$http.post(this.$api.gsEdit + id, {[type]: newStatus}).then(res => {
+                //     this.$alert(res.data.message);
+                // });
+
+                // 1. 先找出要修改的商品
+                // 2. 然后修改它的对应字段
+                // 3. newStatus为true, 设为1, false设置0
+                this.tableData3.filter(goods => goods.id == id)[0][type] = newStatus? 1: 0;
             }
         },
 
@@ -150,6 +176,13 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+    // 属性选择器, 给class前缀为el-icon的标签设置颜色
+    [class^=el-icon] {
+        color: rgba(0, 0, 0, 0.3);
 
+        &.active {
+            color: #000;
+        }
+    }
 </style>
