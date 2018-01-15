@@ -21,7 +21,7 @@ import routerConfig from './router/index.js';
 
 // 3 导入axios, 因为它不是vue插件, 使用起来不方便, 所以我们手动把它加到原型中, 方便使用
 import axios from 'axios';
-axios.defaults.baseURL = 'http://157.122.54.189:9095'; // 一配置, 以后所有的请求就会自动使用这个域名
+axios.defaults.baseURL = 'http://localhost:8899'; // 一配置, 以后所有的请求就会自动使用这个域名
 Vue.prototype.$http = axios;
 
 // 4 导入api配置对象, 为了使用更加方便, 把它也加到原型中
