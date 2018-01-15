@@ -3,10 +3,10 @@ import Login from '../component/login/Login.vue';
 import Admin from '../component/admin/Admin.vue';
 
 // 导入商品模块页面组件
-import GoodsCtList from '../component/admin/goods/goods-content/GoodsCtList.vue';
-import GoodsCtEdit from '../component/admin/goods/goods-content/GoodsCtEdit.vue';
-import GoodsCgList from '../component/admin/goods/goods-category/GoodsCgList.vue';
-import GoodsCgEdit from '../component/admin/goods/goods-category/GoodsCgEdit.vue';
+import GoodsCtList from '../component/admin/goods/content/List.vue';
+import GoodsCtEdit from '../component/admin/goods/content/Edit.vue';
+import GoodsCgList from '../component/admin/goods/category/List.vue';
+import GoodsCgEdit from '../component/admin/goods/category/Edit.vue';
 
 // admin页面的子路由
 let adminChildren = [
