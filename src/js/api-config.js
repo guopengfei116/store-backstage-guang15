@@ -6,7 +6,7 @@ export default {
     // 账号管理
     login: `/admin/account/login`,                               // 登陆
     logout: `/admin/account/logout`,                          // 登出
-    islogin: `/admin/account/islogin`,                         // 是否登陆状态
+    isLogin: `/admin/account/islogin`,                         // 是否登陆状态
 
     // 类别管理
     ctList: `/admin/category/getlist/`,                          // 获取分类列表, 需要参数: tablename

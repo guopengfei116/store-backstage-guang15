@@ -68,9 +68,13 @@
             // 登陆
             login() {
                 this.$http.post(this.$api.login, this.formLabelAlign).then(res => {
+                    
                     if(res.data.status == 0) {
-                        // 使用了路由插件后, 就会拥有该对象
-                        this.$router.push({ name: 'admin' });
+                        // 使用了路由插件后, 组件实例就会拥有两个对象,
+                        // $router代表路由实例, $route代表url对象,
+                        // 我们这里通过$route对象拿取url中的信息, $router对象进行路由跳转等操作
+                        let nextPage = this.$route.query.nextPage;
+                        this.$router.push({ path: nextPage? nextPage: '/admin' });
                     }else {
                         this.$alert(res.data.message);
                     }
