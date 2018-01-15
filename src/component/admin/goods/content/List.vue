@@ -90,6 +90,18 @@
             </el-table-column>
 
         </el-table>
+
+        <!-- 分页 -->
+        <!-- @size-change用来监听每页数量变化时的事件 -->
+        <!-- @current-change用来监听页码变化时的事件 -->
+        <!-- current-page用来指定当前页, page-sizes用来指定每页数量的下拉菜单 -->
+        <!-- page-size用来指定当前每页的数量, total用来指定总数量 -->
+        <el-pagination
+            @size-change="sizeChange" @current-change="currentChange"
+            :current-page="gsListQuery.pageIndex" :page-sizes="page.pageSizes"
+            :page-size="gsListQuery.pageSize" :total="page.total"
+            layout="total, sizes, prev, pager, next, jumper">
+        </el-pagination>
     </div>
 </template>
 
@@ -134,6 +146,12 @@
                     pageIndex: 1,
                     pageSize: 10,
                     searchvalue: ''
+                },
+
+                // 分页相关数据
+                page: {
+                    pageSizes: [10, 20, 30, 40],
+                    total: 100                
                 }
             }
         },
@@ -147,6 +165,7 @@
                     this.tableData3 = res.data.message;
 
                     // 接口还会返回如下三个数据, 将来分页的时候要用
+                    this.page.total = res.data.totalcount;
                     // res.data.totalcount
                     // res.data.pageIndex
                     // res.data.pageSize
@@ -166,7 +185,19 @@
                 // 2. 然后修改它的对应字段
                 // 3. newStatus为true, 设为1, false设置0
                 this.tableData3.filter(goods => goods.id == id)[0][type] = newStatus? 1: 0;
-            }
+            },
+
+            // 每页数量变化时, 拿到新值, 修改数据, 然后重新请求接口渲染列表
+            sizeChange(pageSize) {
+                this.gsListQuery.pageSize = pageSize;
+                this.getGoodsList();
+            },
+
+            // 每页数量变化时, 拿到新值, 修改数据, 需要重新请求接口渲染列表
+            currentChange(pageIndex) {
+                this.gsListQuery.pageIndex = pageIndex;
+                this.getGoodsList();
+            },
         },
 
         // 组件初始化完毕后, 立马调用接口进行渲染
