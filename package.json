@@ -30,6 +30,7 @@
     "element-ui": "^2.0.11",
     "normalize.css": "^7.0.0",
     "vue": "^2.5.13",
+    "vue-quill-editor": "^3.0.4",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   }

@@ -1,17 +1,17 @@
 <template>
     <div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" 
-            class="demo-ruleForm" style="width: 500px">
+            class="demo-ruleForm" style="width: 750px">
 
-            <el-form-item label="标题" prop="name">
+            <el-form-item label="标题" prop="title">
                 <el-input v-model="ruleForm.title"></el-input>
             </el-form-item>
 
-            <el-form-item label="副标题" prop="name">
+            <el-form-item label="副标题" prop="sub_title">
                 <el-input v-model="ruleForm.sub_title"></el-input>
             </el-form-item>
 
-            <el-form-item label="所属类别" prop="region">
+            <el-form-item label="所属类别" prop="category_id">
 
                 <!-- v-model绑定数据, 将来要和每个option的value值进行匹配, 匹配到哪个默认就会选中那个 -->
                 <el-select v-model="ruleForm.category_id" placeholder="请选择活动区域">
@@ -32,29 +32,29 @@
 
             </el-form-item>
 
-            <el-form-item label="是否发布" prop="delivery">
+            <el-form-item label="是否发布">
                 <el-switch v-model="ruleForm.status"></el-switch>
             </el-form-item>
 
-            <el-form-item label="推荐类型" prop="delivery">
+            <el-form-item label="推荐类型">
                 <el-switch active-text="轮播图" v-model="ruleForm.is_slide"></el-switch>
                 <el-switch active-text="置顶" v-model="ruleForm.is_top"></el-switch>
                 <el-switch active-text="热门" v-model="ruleForm.is_hot"></el-switch>
             </el-form-item>
 
-            <el-form-item label="上传封面" prop="delivery">
+            <el-form-item label="上传封面" prop="imgList">
 
                 <!-- action属性用来设置图片上传地址, file-list属性用来关联图片列表 -->
                 <!-- on-preview与on-remove用来添加回调函数的, 注意他们是属性的方式添加 -->
                 <el-upload class="upload-demo" action="http://localhost:8899/admin/article/uploadimg"
-                    :on-success="imgUploaded" :file-list="ruleForm.imgList" list-type="picture">
+                    :on-success="imgUploaded" :on-remove="imgRemove" :file-list="ruleForm.imgList" list-type="picture">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
                 </el-upload>
 
             </el-form-item>
 
-            <el-form-item label="上传附件" prop="delivery">
+            <el-form-item label="上传附件">
 
                 <!-- action属性用来设置图片上传地址, file-list属性用来关联图片列表 -->
                 <!-- on-preview与on-remove用来添加回调函数的, 注意他们是属性的方式添加 -->
@@ -66,28 +66,29 @@
 
             </el-form-item>
 
-            <el-form-item label="货号" prop="name">
+            <el-form-item label="货号" prop="goods_no">
                 <el-input v-model="ruleForm.goods_no"></el-input>
             </el-form-item>
 
-            <el-form-item label="库存" prop="name">
+            <el-form-item label="库存" prop="stock_quantity">
                 <el-input v-model="ruleForm.stock_quantity"></el-input>
             </el-form-item>
 
-            <el-form-item label="市场价" prop="name">
+            <el-form-item label="市场价" prop="market_price">
                 <el-input v-model="ruleForm.market_price"></el-input>
             </el-form-item>
 
-            <el-form-item label="销售价" prop="name">
+            <el-form-item label="销售价" prop="sell_price">
                 <el-input v-model="ruleForm.sell_price"></el-input>
             </el-form-item>
             
-            <el-form-item label="摘要" prop="name">
+            <el-form-item label="摘要" prop="zhaiyao">
                 <el-input v-model="ruleForm.zhaiyao"></el-input>
             </el-form-item>
 
-            <el-form-item label="详细内容" prop="name">
-                <el-input type="textarea" v-html="ruleForm.content"></el-input>
+            <el-form-item label="详细内容" prop="content">
+                <quill-editor v-model="ruleForm.content"></quill-editor>
+                <!-- <el-input type="textarea" v-html="ruleForm.content"></el-input> -->
             </el-form-item>
 
             <el-form-item>
@@ -100,8 +101,24 @@
 </template>
 
 <script>
+    // 导入富文本插件样式与组件 
+    import 'quill/dist/quill.core.css'
+    import 'quill/dist/quill.snow.css'
+    import 'quill/dist/quill.bubble.css'
+    import { quillEditor } from 'vue-quill-editor'
+
     export default {
         data() {
+
+            // 专门为封面图准备的校验函数
+            function validateImg(rule, value, callback) {
+                if (value === '' || value.length == 0) {
+                    callback(new Error('请上传一张封面图'));
+                } else {
+                    callback();
+                }
+            };
+
             return {
                 // 当前编辑的商品ID
                 id: null,
@@ -114,27 +131,38 @@
 
                 // 表单校验规则
                 rules: {
-                    name: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' },
-                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    title: [
+                        { required: true, message: '请输入标题', trigger: 'blur' },
+                        { min: 5, max: 50, message: '长度在 5 到 15 个字符', trigger: 'blur' }
                     ],
-                    region: [
-                        { required: true, message: '请选择活动区域', trigger: 'change' }
+                    sub_title: [
+                        { required: true, message: '请输入副标题', trigger: 'blur' },
+                        { min: 5, max: 50, message: '长度在 5 到 15 个字符', trigger: 'blur' }
                     ],
-                    date1: [
-                        { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+                    category_id: [
+                        { required: true, message: '请选择商品分类', trigger: 'blur' },
+                        { type: 'number', message: '值必须为数字', trigger: 'blur' }
                     ],
-                    date2: [
-                        { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+                    goods_no: [
+                        { required: true, message: '请输入商品编号', trigger: 'blur' }
                     ],
-                    type: [
-                        { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+                    stock_quantity: [
+                        { required: true, message: '请输入库存', trigger: 'blur' }
                     ],
-                    resource: [
-                        { required: true, message: '请选择活动资源', trigger: 'change' }
+                    market_price: [
+                        { required: true, message: '请输入市场价', trigger: 'blur' }
                     ],
-                    desc: [
-                        { required: true, message: '请填写活动形式', trigger: 'blur' }
+                    sell_price: [
+                        { required: true, message: '请输入销售价', trigger: 'blur' }
+                    ],
+                    zhaiyao: [
+                        { required: true, message: '请输入摘要', trigger: 'blur' }
+                    ],
+                    content: [
+                        { required: true, message: '请输入描述信息', trigger: 'blur' }
+                    ],
+                    imgList: [
+                        { validator: validateImg, trigger: 'submit' }
                     ]
                 }
             };
@@ -142,15 +170,31 @@
 
         methods: {
 
+            // 修改商品数据
+            goodsModify() {
+                this.$http.post(this.$api.gsEdit + this.id, this.ruleForm).then(res => {
+                    if(res.data.status == 0) {
+
+                        this.$alert('马上跳回商品列表页', '修改成功', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                this.$router.push({ name: 'goodsCtList' });
+                            }
+                        });
+       
+                    }
+                });
+            },
+
             // 保存修改
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    alert('submit!');
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
+                    if (valid) {
+                       this.goodsModify();
+                    } else {
+                        this.$alert('error submit!!');
+                        return false;
+                    }
                 });
             },
 
@@ -177,6 +221,14 @@
                 this.ruleForm.imgList = [res];
             },
 
+            // 删除封面图
+            // 1 获取file.url信息
+            // 2 然后遍历this.ruleForm.imgList, 从中删除掉与之相同url的图片数据
+            imgRemove(file, fileList) {
+                let removeUrl = file.url; 
+                this.ruleForm.imgList = this.ruleForm.imgList.filter(v => v.url != removeUrl);
+            },
+
             // 附件上传成功回调
             // 注意: 附件后端接口可以设多个, 所以每次成功后我们在原来的基础上push新附件
             fileUploaded(res, file, fileList) {
@@ -190,6 +242,10 @@
             this.id = this.$route.params.id;
             this.getGoods();
             this.getGoodsCategory();
+        },
+
+        components: {
+            quillEditor,
         }
     }
 </script>
