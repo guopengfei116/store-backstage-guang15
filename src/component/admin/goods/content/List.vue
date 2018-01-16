@@ -213,7 +213,7 @@
                     if(res.data.status == 0) {
                         this.getGoodsList();
                         this.selection = [];
-                        
+
                         // 成功后给出提示
                         this.$message({
                             type: 'success',
