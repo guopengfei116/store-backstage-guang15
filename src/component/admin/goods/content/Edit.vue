@@ -18,7 +18,15 @@
 
                     <!-- goodsCategory是请求接口获取到的分类列表, 将来用户要选择其中一个分类的ID传给后端 -->
                     <el-option v-for="item in goodsCategory" :key="item.category_id" 
-                        :label="item.title" :value="item.category_id"></el-option>
+                        :label="item.title" :value="item.category_id">
+
+                        <!-- option标签内可以嵌套子标签, 但是option的label属性不能删掉 -->
+                        <span>
+                            <span v-if="item.class_layer != 1">|- </span>
+                            <span>{{ item.title }}</span>
+                        </span>	  
+
+                    </el-option>
 
                 </el-select>
 
@@ -35,11 +43,27 @@
             </el-form-item>
 
             <el-form-item label="上传封面" prop="delivery">
-                <el-switch v-model="ruleForm.imgList"></el-switch>
+
+                <!-- action属性用来设置图片上传地址, file-list属性用来关联图片列表 -->
+                <!-- on-preview与on-remove用来添加回调函数的, 注意他们是属性的方式添加 -->
+                <el-upload class="upload-demo" action="http://localhost:8899/admin/article/uploadimg"
+                    :on-success="imgUploaded" :file-list="ruleForm.imgList" list-type="picture">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+
             </el-form-item>
 
             <el-form-item label="上传附件" prop="delivery">
-                <el-switch v-model="ruleForm.fileList"></el-switch>
+
+                <!-- action属性用来设置图片上传地址, file-list属性用来关联图片列表 -->
+                <!-- on-preview与on-remove用来添加回调函数的, 注意他们是属性的方式添加 -->
+                <el-upload class="upload-demo" action="http://localhost:8899/admin/article/uploadfile"
+                    :on-success="fileUploaded" :file-list="ruleForm.fileList">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+
             </el-form-item>
 
             <el-form-item label="货号" prop="name">
@@ -145,6 +169,18 @@
                 this.$http.get(this.$api.ctList + 'goods').then(res => {
                     this.goodsCategory = res.data.message;
                 });
+            },
+
+            // 封面上传成功回调
+            // 注意: 商品的封面后端接口只能设一个, 不能设多个, 所以每次我们上传成功后把原有的封面覆盖掉
+            imgUploaded(res, file, fileList) {
+                this.ruleForm.imgList = [res];
+            },
+
+            // 附件上传成功回调
+            // 注意: 附件后端接口可以设多个, 所以每次成功后我们在原来的基础上push新附件
+            fileUploaded(res, file, fileList) {
+                this.ruleForm.fileList.push(res);
             }
 
         },
